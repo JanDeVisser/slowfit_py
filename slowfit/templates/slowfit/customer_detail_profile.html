@@ -1,0 +1,20 @@
+{% load field %}
+
+<div class="card">
+    <div class="card-body">
+        {% field object "firstName" mode %}
+        {% field object "lastName" mode %}
+        {% field object "address" mode %}
+        {% field object "email" mode %}
+        {% field object "phoneMain" mode %}
+        {% field object "phoneAlt" mode %}
+        {% field object "dateOfBirth" mode %}
+        {% field object "height" mode %}
+        {% field object "inseam" mode %}
+        <div class="row my-3">
+            <div class="col-sm">
+                <a href="{% url editurl object.id %}" class="btn btn-primary">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>

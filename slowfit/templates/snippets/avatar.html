@@ -1,0 +1,46 @@
+{% if object.avatar or avatar.fallback %}
+    <div class="row my-3">
+        <div class="col-sm-12">
+            {% if object.avatar %}
+                <a href="#" data-toggle="modal" data-target="#avatar-display">
+                    <img width="200" src="/asset/{{ object.avatar.id }}" alt="{{ avatar.alt_text|default:"Avatar" }}"/>
+                </a>
+            {% else %}
+                <img width="200" src="{{ avatar.fallback }}" alt="{{ avatar.alt_text|default:"Avatar" }}"/>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+{% if avatar.button_label %}
+    <div class="row my-3">
+        <div class="col-sm-12">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#upload-avatar"
+                    aria-expanded="false" aria-controls="collapseExample">
+                {{ avatar.button_label }}
+            </button>
+            <div class="collapse" id="upload-avatar">
+                <div class="card card-body">
+                    <form action="/asset" method="post" enctype="multipart/form-data" class="form-inline">
+                        <input type="hidden" name="pid" value="{{ object.id }}"/>
+                        <input type="hidden" name="pkind" value="{{ model }}"/>
+                        <input type="hidden" name="update" value="true"/>
+                        <input type="hidden" name="redirect" value="{{ request.path }}"/>
+                        <input type="hidden" name="Tags" value="{{ avatar.tag }}"/>
+                        <label class="sr-only" for="data">File</label>
+                        <input type="file" name="data" class="form-control"/>
+                        <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if object.avatar %}
+    <div class="modal fade" id="avatar-display" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <img src="/asset/{{ object.avatar.id }}" alt="{{ avatar.alt_text|default:"Avatar" }}"/>
+            </div>
+        </div>
+    </div>
+{% endif %}

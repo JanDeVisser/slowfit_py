@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block Title %}
+    {{ object }}
+{% endblock %}
+
+{% block Body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                {% block Header %}
+                    <h2>
+                        {{ object }}
+                    </h2>
+                {% endblock %}
+                <div class="row">
+                    <div class="col-sm">
+                        <ul class="nav nav-tabs">
+                            {% for tab in tabs %}
+                                {% if forloop.first %}
+                                    {% include "snippets/tabheader.html" with tab_id=tab.tab_id tab_label=tab.tab_label tab_class="active" %}
+                                {% else %}
+                                    {% include "snippets/tabheader.html" with tab_id=tab.tab_id tab_label=tab.tab_label tab_class="" %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if object.has_assets %}
+                                {% include "snippets/tabheader.html" with tab_id="assets" tab_header="Uploads" tab_class="" %}
+                            {% endif %}
+                            {% if object.has_notes %}
+                                {% include "snippets/tabheader.html" with tab_id="notes" tab_header="Notes" tab_class="" %}
+                            {% endif %}
+                        </ul>
+                        <div class="tab-content">
+                            {% for tab in tabs %}
+                                {% if forloop.first %}
+                                    <div class="tab-pane fade show active" id="{{ tab.tab_id }}" role="tabpanel" aria-labelledby="{{ tab.tab_id }}-tab">
+                                {% else %}
+                                    <div class="tab-pane fade show" id="{{ tab.tab_id }}" role="tabpanel" aria-labelledby="{{ tab.tab_id }}-tab">
+                                {% endif %}
+                                        {% include tab.html %}
+                                    </div>
+                            {% endfor %}
+                            {% if object.has_assets %}
+                                <div class="tab-pane fade" id="assets" role="tabpanel" aria-labelledby="assets-tab">
+                                    {% include "snippets/asset_tab.html" %}
+                                </div>
+                            {% endif %}
+                            {% if object.has_notes %}
+                                <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+                                    {% include "snippets/notes_tab.html" %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                {% include "snippets/avatar.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block Trailer %}
+    <script>
+        $(document).ready(() => {
+            let url = location.href.replace(/\/$/, "");
+
+            if (location.hash) {
+                const hash = url.split("#");
+                const tab = $(`a[href="#${hash[1]}"]`);
+                tab.tab("show");
+                url = location.href.replace(/\/#/, "#");
+                history.replaceState(null, null, url);
+                setTimeout(() => {
+                    $(window).scrollTop(0);
+                }, 400);
+            }
+
+            $('a[data-toggle="tab"]').on("click", function() {
+                const hash = $(this).attr("href");
+                history.replaceState(null, null, `${url.split("#")[0]}${hash}/`);
+            });
+        });
+    </script>
+{% endblock %}

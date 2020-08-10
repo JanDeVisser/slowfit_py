@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block Title %}Slowfit bike fit tracker{% endblock %}
+
+{% block Body %}
+    {% if user is None or not user.is_authenticated %}
+        <h3><a href="{% url "login" %}">You have to log in</a></h3>
+    {% else %}
+        <div>
+            <h2>Find your frame</h2>
+            <form name="fitcalculator">
+                <div class="form-group">
+                    <label for="HY">Handlebar Stack (HY):</label>
+                    <input type="number" class="form-control" name="HY" id="HY" value="640"/>
+                </div>
+                <div class="form-group">
+                    <label for="HX">Handlebar Reach (HX):</label>
+                    <input type="number" class="form-control" name="HX" id="HX" value="514"/>
+                </div>
+                <div class="collapse" id="advanced">
+                </div>
+                <script>
+                    function calculate() {
+                        const hx = document.getElementById("HX").value;
+                        const hy = document.getElementById("HY").value;
+                        if (hx && hy) {
+                            fetch(`{% url 'calculate' %}?hx=${hx}&hy=${hy}`)
+                                .then((response) => {
+                                    return response.json();
+                                })
+                                .then((data) => {
+                                    if (data && data.length) {
+                                        const table = document.getElementById("candidate-table");
+                                        const body = table.tBodies[0];
+                                        while (body.rows.length > 0) {
+                                            body.deleteRow(0);
+                                        }
+                                        for (let i = 0; i < data.length; i++) {
+                                            const row = data[i];
+                                            const tr = body.insertRow();
+                                            let td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = `<a href="/brand/${row.brand_id}">${row.brand}</a>`;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = `<a href="/frame/${row.frame_id}">${row.frame}</a>`;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = row.year_from;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = row.frame_size;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = row.spacers;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = row.stem_length;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            td.innerHTML = row.stem_angle;
+                                            td = tr.insertCell();
+                                            td.className = "text-center";
+                                            const d = row.distance.toFixed(1);
+                                            td.innerHTML = `${d}`;
+                                        }
+                                        const showCandidates = $('#show-candidates');
+                                        showCandidates.collapse('show');
+                                    }
+                                });
+                        }
+                    }
+                </script>
+                <button type="button" class="btn btn-primary" onclick="calculate();">
+                    Calculate Fit
+                </button>
+            </form>
+            <div class="collapse" id="show-candidates">
+                <div class="table-responsive">
+                    <h2>Candidate Frames</h2>
+                    <table class="table table-bordered table-hover" id="candidate-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Brand</th>
+                                <th class="text-center">Frame</th>
+                                <th class="text-center">Year</th>
+                                <th class="text-center">Size</th>
+                                <th class="text-center">Spacers (mm)</th>
+                                <th class="text-center">Stem Length (mm)</th>
+                                <th class="text-center">Angle (deg)</th>
+                                <th class="text-center">Distance (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock Body %}

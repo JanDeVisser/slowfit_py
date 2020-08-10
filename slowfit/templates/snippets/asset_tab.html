@@ -1,0 +1,53 @@
+{% for asset in object.asset_set.all %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ asset.description|default:asset.name }}</h5>
+                    <p class="card-text">Tags: {{ asset.tags }}</p>
+                    <a href="/asset/{{ asset.id }}" class="card-link">Download</a>
+                    <a href="/asset?action=delete&id={{ asset.id }}&redirect={{ request.path }}" class="card-link">Delete</a>
+                </div>
+                {% if asset.is_image %}
+                   <img src="/asset/{{ asset.id }}" alt="{{ asset.name }}" class="card-img-bottom" width="600px"/>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div class="row my-3">
+        <div class="col-sm-12">
+            <h4>None yet!</h4>
+        </div>
+    </div>
+{% endfor %}
+<div class="row my-3">
+    <div class="col-sm-12">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#upload-asset" aria-expanded="false" aria-controls="collapseExample">
+            Upload File
+        </button>
+        <div class="collapse card" id="upload-asset">
+            <div class="card-body">
+                <h5 class="card-title">Upload File</h5>
+                <form action="/asset" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="pid" value="{{ object.id}}"/>
+                    <input type="hidden" name="pkind" value="{{ model }}"/>
+                    <input type="hidden" name="update" value="false"/>
+                    <div class="form-group">
+                        <label for="Description">Description:</label>
+                        <input type="text" class="form-control" name="Description"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="Tags">Tags:</label>
+                        <input type="text" class="form-control" name="Tags" placeholder="Comma-separated"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="data">File to upload</label>
+                        <input type="file" name="data" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                </form>
+            </div> <!-- card-body -->
+        </div> <!-- collapse -->
+    </div> <!-- col-sm-12 -->
+</div> <!-- row -->

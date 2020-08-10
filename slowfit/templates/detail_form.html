@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block Body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                {% block Header %}
+                    <h2>{% block HeaderText %}Header Text{% endblock %}</h2>
+                {% endblock %}
+            </div>
+            <div class="col-sm-9">
+                <div class="table-responsive">
+                    {% block Form %}
+{#                        <form action="{% block URL %}/{% endblock %}" method="POST">#}
+                        <form method="POST">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                {% block Field %}
+                                    <div class="form-group">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.help_text %}
+                                            <small id="{{ field.name }}-help" class="form-text text-muted">
+                                                {{ field.help_text|safe }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                {% endblock %}
+                            {% endfor %}
+                            <div class="my-3">
+                                {% block FormButtons %}
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                    {% if cancelurl %}
+                                        {% if object %}
+                                            <a href="{% url cancelurl object.id %}" class="btn btn-secondary">Cancel</a>
+                                        {% else %}
+                                            <a href="{% url cancelurl %}" class="btn btn-secondary">Cancel</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endblock %}
+                            </div>
+                        </form>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

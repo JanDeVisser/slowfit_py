@@ -1,0 +1,129 @@
+<script>
+    let rowIx = -1;
+
+    function doNewSize() {
+        const newRow = document.getElementById("SizeRun-New");
+        newRow.hidden = false;
+        const buttonRow = document.getElementById("new-size");
+        buttonRow.hidden = true;
+    }
+
+    function doConfirmDeleteSize(elementId, name) {
+        if (window.confirm(`Are you sure you want to delete frame size ${name}?`)) {
+            const form = document.getElementById("framesizes");
+            form.reset();
+            const elem = document.getElementById(elementId);
+            elem.value = "on";
+            form.submit();
+        }
+    }
+
+    function doCancelNewSize() {
+        const form = document.getElementById("framesizes");
+        form.reset();
+        const newRow = document.getElementById("SizeRun-New");
+        newRow.hidden = true;
+        const buttonRow = document.getElementById("new-size");
+        buttonRow.hidden = false;
+    }
+
+    function doEditSize(id) {
+        const editRow = document.getElementById(`SizeRun-${id}-Edit`);
+        editRow.hidden = false;
+        const viewRow = document.getElementById(`SizeRun-${id}-View`);
+        viewRow.hidden = true;
+        const buttonRow = document.getElementById("new-size");
+        buttonRow.hidden = true;
+    }
+
+    function doCancelEditSize(id) {
+        const editRow = document.getElementById(`SizeRun-${id}-Edit`);
+        const form = document.getElementById("framesizes");
+        form.reset();
+        editRow.hidden = true;
+        const viewRow = document.getElementById(`SizeRun-${id}-View`);
+        viewRow.hidden = false;
+        const buttonRow = document.getElementById("new-size");
+        buttonRow.hidden = false;
+    }
+</script>
+
+<div class="row my-3">
+    <div class="col-sm-12">
+        <form action="{% url 'frame-view' object.id %}" method="post" id="framesizes">
+            {% csrf_token %}
+            {{ framesize_form.management_form }}
+            <table class="table table-bordered table-hover" id="sizerun">
+                <thead>
+                    <tr>
+                        <th class="text-center">Size</th>
+                        <th class="text-center">Stack</th>
+                        <th class="text-center">Reach</th>
+                        <th class="text-center">Head Tube Angle</th>
+                        <th class="text-center">&nbsp;</th>
+                    </tr>
+                </thead>
+                {% for size in framesize_form.forms %}
+                    {% if not forloop.last %}
+                        <tr id="SizeRun-{{ size.instance.id }}-View">
+                            {% for fld in size.visible_fields %}
+                                {%  if fld.name != "DELETE" %}
+                                    <td class="text-center">{{ fld.value }}</td>
+                                {% else %}
+                                    <td class="text-center">
+                                        <input type="hidden" name="{{ fld.id_for_label }}" id="{{ fld.id_for_label }}">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="doEditSize({{ size.instance.id }});">Edit</button>&nbsp;
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick='doConfirmDeleteSize("{{ fld.id_for_label }}", "{{ size.name.value }}");'>Delete</button>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        <tr id="SizeRun-{{ size.instance.id }}-Edit" hidden>
+                            {% for fld in size.visible_fields %}
+                                {% if fld.name != "DELETE" %}
+                                    <td class="text-center">{{ fld }}</td>
+                                {% else %}
+                                    <td class="text-center">
+                                        {% for hidden in size.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                        <button type="submit" class="btn btn-primary" form="framesizes">Save</button>&nbsp;
+                                        <button type="reset" class="btn btn-secondary" form="framesizes">Reset</button>&nbsp;
+                                        <button type="button" class="btn btn-secondary" form="framesizes" onclick="doCancelEditSize({{ size.instance.id }});">Cancel</button>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                    {% if forloop.last %}
+                        <tr id="new-size">
+                            {% if forloop.first %}
+                                <td colspan="4">None yet!</td>
+                            {% else %}
+                                <td colspan="4">&nbsp;</td>
+                            {% endif %}
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="doNewSize();">New Size</button>
+                            </td>
+                        </tr>
+                        <tr id="SizeRun-New" hidden>
+                            {% for fld in size.visible_fields %}
+                                {% if fld.name != "DELETE" %}
+                                    <td class="text-center">{{ fld }}</td>
+                                {% endif %}
+                            {% endfor %}
+                            <td class="text-center">
+                                {% for hidden in size.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                                <button type="submit" class="btn btn-primary" form="framesizes">Save</button>&nbsp;
+                                <button type="reset" class="btn btn-secondary" form="framesizes">Reset</button>&nbsp;
+                                <button type="button" class="btn btn-secondary" form="framesizes" onclick="doCancelNewSize();">Cancel</button>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </form>
+    </div>
+</div>

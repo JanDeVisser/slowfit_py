@@ -1,0 +1,79 @@
+{% if type == "TextField" %}
+    {% if mode != "detail" %}
+        <div class="form-group">
+            <label for="{{ name }}">{{ field.verbose_name }}:</label>
+            <textarea class="form-control" name="{{ name }}" id="{{ name}}"
+                {% for attr in attrs %}
+                    {{ attr }}="{{ attrs.attr }}"
+                {% endfor %}
+            >{{ value }}</textarea>
+        </div>
+    {% else %}
+        <div class="row my-2">
+            <div class="col-sm-4">{{ field.verbose_name }}:</div>
+            <div class="col-sm-8"><pre>{{ value }}</pre></div>
+        </div>
+    {% endif %}
+{% elif type == "ForeighKey" %}
+    {% if mode != "detail" %}
+        <div class="form-group" id="{{ name }}-Group">
+            <label for="{{ name }}-Input">{{ field.verbose_name }}:</label>
+        </div>
+        <script>
+            const {{ name }}Lookup = new Lookup(
+                "{{ name }}-Group",
+                {
+                    name: "{{ name }}",
+                    ref: "{{ attrs.referenceJSON }}",
+                    query: "{{ attrs.query }}",
+                    display: "`{{ attrs.displayExpr }}`"
+                }
+            );
+        </script>
+    {% else %}
+        <div class="row my-2">
+            <div class="col-sm-4">{{ field.verbose_name }}:</div>
+            <div class="col-sm-8"><a href="{{ attrs.href }}">{{ value }}</a></div>
+        </div>
+    {% endif %}
+{% else %}
+    {% if mode != "detail" %}
+        <div class="form-group">
+            <label for="{{ name }}">{{ field.verbose_name }}:</label>
+            {% if "options" in attrs %}
+                <datalist id="{{ name }}-Datalist">
+                    {% for option in args.options %}
+                        <option>{{ option }}</option>
+                    {% endfor %}
+                </datalist>
+            {% endif %}
+            <input type="{{ inputtype }}" class="form-control" name="{{ name }}" id="{{ name }}" value="{{ value }}"
+                {% for attr in attrs %}
+                    {% if attr == "options" %}
+                        list="{{ name }}-Datalist"
+                    {% elif attr == "href" %}
+                    {% else %}
+                        {{ attr }}="{{ attrs.attr }}"
+                    {% endif %}
+                {% endfor %}
+            />
+        </div>
+    {% else %}
+        <div class="row my-2">
+            <div class="col-sm-4">
+                {{ field.verbose_name }}:
+            </div>
+            <div class="col-sm-8">
+                {% if "href" in attrs %}
+                    <a href="{{ attrs.href }}">{{ value }}</a>
+                {% else %}
+                    {% if type == "URLField" %}
+                        {{ value|urlize }}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,38 @@
+{%  extends "base.html" %}
+
+{% block Title %}Slowfit bike fit tracker - Customers{% endblock Title %}
+
+{% block Body %}
+    <div class="row">
+        <h2>Customers</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th class="text-center">First Name</th>
+                <th class="text-center">Last Name</th>
+            </tr>
+            {% for customer in object_list %}
+                <tr>
+                    <td class="text-center">
+                        <a href="{% url 'customer-view' customer.id %}">{{ customer.firstName }}</a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'customer-view' customer.id %}">{{ customer.lastName }}</a>
+                    </td>
+                </tr>
+                {% if forloop.last %}
+                <tr id="new-size">
+                    <td>&nbsp;</td>
+                {% endif %}
+            {% empty %}
+                <tr id="new-size">
+                    <td>None yet!</td>
+            {% endfor %}
+                    <td class="text-center">
+                        <a href="{% url 'customer-new' %}" class="btn btn-primary">New Customer</a>
+                    </td>
+                </tr>
+        </table>
+    </div>
+{% endblock %}

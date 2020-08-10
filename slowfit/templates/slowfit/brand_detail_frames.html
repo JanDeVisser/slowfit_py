@@ -1,0 +1,37 @@
+<div class="row my-3">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-hover">
+            {% for frame in object.frame_set.all %}
+                {% if forloop.first %}
+                    <tr>
+                        <th class="text-center">Model Year</th>
+                        <th class="text-center">Frame</th>
+                        <th class="text-center">Type</th>
+                        <th class="text-center">Material</th>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td class="text-center"><a href="/year/{{ frame.yearFrom }}">{{ frame.yearFrom }}</a></td>
+                    <td class="text-center"><a href="/frame/{{ frame.id }}">{{ frame.name }}</a></td>
+                    <td class="text-center"><a href="/type/{{ frame.bikeType.id }}">{{ frame.bikeType.name }}</a></td>
+                    <td class="text-center"><a href="/material/{{ frame.material.id }}">{{ frame.material.name }}</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>
+                        <h4>None yet!</h4>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="row my-3">
+    <div class="col-sm-12">
+        <a href="/frame/new?brand_id={{ object.id }}&cancelurl="/dev/null"> <!-- FIXME -->
+            <button class="btn btn-primary" type="button">
+                New Frame
+            </button>
+        </a>
+    </div>
+</div>

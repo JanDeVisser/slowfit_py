@@ -1,0 +1,51 @@
+{%  extends "base.html" %}
+
+{% block Title %}Slowfit bike fit tracker - Brands{% endblock Title %}
+
+{% block Body %}
+    <div class="row">
+        <h2>Brands</h2>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th class="text-center" style="width: 60px">&nbsp;</th>
+                <th class="text-center" style="width: 60px">&nbsp;</th>
+                <th class="text-center">Brand</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Website</th>
+            </tr>
+            {% for brand in object_list %}
+                <tr>
+                    <td class="text-center" style="width: 60px">
+                        {% if brand.country and brand.country.isoCode %}
+                            <img src="{{ brand.country.flag }}" alt="{{ brand.country.name}}"
+                                 height="17px" width="25px"/>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    <td class="text-center" style="width: 60px">
+                        {% if brand.logo %}
+                            <img height="25px" src="/asset/{{ brand.logo.id }}" alt="{{ brand.name }}"/>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    <td class="text-center" style="vertical-align: middle">
+                        <a href="/brand/{{ brand.id }}">{{ brand.name }}</a>
+                    </td>
+                    <td class="text-center">{{ brand.description }}</td>
+                    <td class="text-center" style="vertical-align: middle">{{  brand.URL|urlizetrunc:30 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5"><i>No brands yet</i></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <a class="btn btn-primary" href="/brand/new">
+            New Brand
+        </a>
+    </div>
+{% endblock Body %}

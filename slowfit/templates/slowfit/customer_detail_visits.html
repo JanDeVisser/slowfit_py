@@ -1,0 +1,30 @@
+<div class="row my-3">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-hover">
+            {% for frame in object.frame_set.all %}
+                {% if forloop.first %}
+                    <tr>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Purpose</th>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td class="text-center"><a href="{% url "visit-view" object.id %}">{{ visit.Date }}</a></td>
+                    <td class="text-center"><a href="{% url "visit-view" object.id %}">{{ visit.Purpose }}</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>
+                        <h4>None yet!</h4>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="row my-3">
+    <div class="col-sm-12">
+        <a href="{% url "customer-edit" object.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url "visit-new" object.id %}" class="btn btn-primary">New Visit</a>
+    </div>
+</div>

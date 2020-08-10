@@ -1,0 +1,53 @@
+{% load humanize %}
+
+{% for note in object.note_set.all %}
+    <div class="row my-3">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ note.posted|naturaltime }}
+                        <small>
+                            {% if note.author %}
+                                {{ note.author.first_name }}{{ note.author.last_name }}
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </small>
+                    </h5>
+                    <p class="card-text">{{ note.text }}</p>
+                    <a href="/note?action=delete&id={{ note.id }}&redirect={{ request.path }}" class="card-link">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div class="row my-3">
+        <div class="col-sm-12">
+            <h4>None yet!</h4>
+        </div>
+    </div>
+{% endfor %}
+<div class="row my-3">
+    <div class="col-sm-12">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-note" aria-expanded="false" aria-controls="collapseExample">
+            Add Note
+        </button>
+        <div class="collapse card" id="add-note">
+            <div class="card-body">
+                <h5 class="card-title">Add Note</h5>
+                <form action="/note" method="post">
+                    <input type="hidden" name="pid" value="{{ object.id }}"/>
+                    <input type="hidden" name="pkind" value="{{ model}}"/>
+                    <input type="hidden" name="redirect" value="{{ request.path }}"/>
+                    <div class="form-group">
+                        <label for="Text">Note:</label>
+                        <textarea class="form-control" name="Text" id="Text" rows="5" cols="50"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Add</button>
+                </form>
+            </div> <!-- card-body -->
+        </div> <!-- collapse -->
+    </div> <!-- col-sm-12 -->
+</div> <!-- row -->
+
