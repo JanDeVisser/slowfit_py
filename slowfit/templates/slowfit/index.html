@@ -4,7 +4,7 @@
 
 {% block Body %}
     {% if user is None or not user.is_authenticated %}
-        <h3><a href="{% url "login" %}">You have to log in</a></h3>
+        <h3><a id="LoginLink" href="{% url "login" %}">You have to log in</a></h3>
     {% else %}
         <div>
             <h2>Find your frame</h2>

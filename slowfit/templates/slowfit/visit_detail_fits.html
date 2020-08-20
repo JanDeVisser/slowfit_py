@@ -1,0 +1,30 @@
+<div class="row my-3">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-hover">
+            {% for fit in object.fitsheet_set.all %}
+                {% if forloop.first %}
+                    <tr>
+                        <th class="text-center">Type</th>
+                        <th class="text-center">Description</th>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td class="text-center"><a href="{% url "fitsheet-view" fit.id %}">{{ fit.fit_type }}</a></td>
+                    <td class="text-center"><a href="{% url "fitsheet-view" fit.id %}">{{ fit.description }}</a></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td>
+                        <h4>None yet!</h4>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="row my-3">
+    <div class="col-sm-12">
+        <a href="{% url "fitsheet-new" object.id "Road" %}" class="btn btn-primary">New Road Fit</a>
+        <a href="{% url "fitsheet-new" object.id "TT" %}" class="btn btn-primary">New TT/Triathlon Fit</a>
+    </div>
+</div>

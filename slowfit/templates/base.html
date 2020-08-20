@@ -37,23 +37,23 @@
                 <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/brand">Brands</a>
+                            <a class="nav-link" id="Brands" href="/brand">Brands</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/frame">Frames</a>
+                            <a class="nav-link" id="Frames" href="/frame">Frames</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/customer">Customers</a>
+                            <a class="nav-link" id="Customers" href="/customer">Customers</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'import' %}">Import</a>
+                            <a class="nav-link" id="Import" href="{% url 'import' %}">Import</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            <a class="nav-link" id="Logout" href="{% url 'logout' %}">Logout</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link" id="Login" href="{% url 'login' %}">Login</a>
                         </li>
                     {% endif %}
                 </ul>

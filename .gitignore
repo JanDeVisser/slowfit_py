@@ -1,0 +1,8 @@
+/slowfit/geckodriver.log
+/manage.py
+/credentials.json
+/sf.code-workspace
+/db.sqlite3
+/venv/
+*.pyc
+/assets/

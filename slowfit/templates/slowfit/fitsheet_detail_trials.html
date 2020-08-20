@@ -1,0 +1,188 @@
+<script>
+    let rowIx = -1;
+    let active_form = null;
+    let active_row = null;
+    let view_row = null;
+    let new_button_row = null;
+
+    function _cancel() {
+        if (!new_button_row) {
+            new_button_row = document.getElementById("new_trial")
+        }
+        if (active_form) {
+            active_form.reset();
+            active_form = null;
+        }
+        if (active_row) {
+            active_row.hidden = true;
+            active_row = null;
+        }
+        if (view_row) {
+            view_row.hidden = false;
+            view_row = null;
+        }
+        new_button_row.hidden = false;
+    }
+
+    function _activate(form, edit, view) {
+        if (!new_button_row) {
+            new_button_row = document.getElementById("new_trial")
+        }
+        _cancel()
+        active_form = form;
+        active_row = edit;
+        view_row = view;
+        if (view) {
+            view.hidden = true;
+        }
+        if (edit) {
+            edit.hidden = false;
+        }
+        new_button_row.hidden = true;
+    }
+
+    function doNewTrial() {
+        _activate(document.getElementById("Trial-New-form"),
+            document.getElementById("Trial-New"), null);
+    }
+
+    function doConfirmDeleteTrial(trial_id, trial_count) {
+        if (window.confirm(`Are you sure you want to delete trial ${trial_count}?`)) {
+            const form = document.getElementById(`Trial-${id}-delete`);
+            form.submit();
+        }
+    }
+
+    function doCancelNewTrial() {
+        _cancel();
+    }
+
+    function doEditTrial(id) {
+        _activate(document.getElementById(`Trial-${id}-form`),
+            document.getElementById(`Trial-${id}-Edit`),
+            document.getElementById(`Trial-${id}-View`))
+    }
+
+    function doCancelEditTrial() {
+        _cancel()
+    }
+</script>
+
+<div class="row my-3">
+    <div class="col-sm-12">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">HY (Stack)</th>
+                <th class="text-center">HX (Reach)</th>
+                <th class="text-center">SY (Saddle Vert)</th>
+                <th class="text-center">HX (Saddle Horiz)</th>
+                <th class="text-center">&nbsp;</th>
+            </tr>
+            {% for trial in object.trial_set.all %}
+                <tr id="Trial-{{ trial.id }}-View">
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td class="text-center">{{ trial.hy }}</td>
+                    <td class="text-center">{{ trial.hx }}</td>
+                    <td class="text-center">{{ trial.sy }}</td>
+                    <td class="text-center">{{ trial.sx }}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                                onclick="doEditTrial({{ trial.id }});">
+                            Edit
+                        </button>&nbsp;
+                        <form action="{% url 'trial-delete' trial.id %}" method="post" id="Trial-{{ trial.id }}-delete">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                    onclick='doConfirmDeleteSize({{ trial.id }}, {{ forloop.counter }});'>
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr id="Trial-{{ trial.id }}-Edit" hidden>
+                    <form action="{% url 'trial-edit' trial.id %}" method="post" id="Trial-{{ trial.id }}-form">
+                        {% csrf_token %}
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td class="text-center">
+                            <input type="number" id="Trial-{{ trial.id }}-hy" name="hy" value="{{ trial.hy }}"
+                                   class="form-control">
+                        </td>
+                        <td class="text-center">
+                            <input type="number" id="Trial-{{ trial.id }}-hx" name="hx" value="{{ trial.hx }}"
+                                   class="form-control">
+                        </td>
+                        <td class="text-center">
+                            <input type="number" id="Trial-{{ trial.id }}-sy" name="sy" value="{{ trial.sy }}"
+                                   class="form-control">
+                        </td>
+                        <td class="text-center">
+                            <input type="number" id="Trial-{{ trial.id }}-xs" name="sx" value="{{ trial.sx }}"
+                                   class="form-control">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary" form="Trial-{{ trial.id }}-form">
+                                Save
+                            </button>&nbsp;
+                            <button type="reset" class="btn btn-secondary" form="Trial-{{ trial.id }}-form">
+                                Reset
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-secondary" form="Trial-{{ trial.id }}-form"
+                                    onclick="doCancelEditTrial({{ trial.id }}, {{ forloop.counter }});">
+                                Cancel</button>
+                        </td>
+                    </form>
+                </tr>
+                {% if forloop.last %}
+                    <tr id="new_trial">
+                        <td colspan="5">&nbsp;</td>
+                {% endif %}
+            {% empty %}
+                <tr id="new_trial">
+                    <td colspan="5">
+                        <h4>None yet!</h4>
+                    </td>
+            {% endfor %}
+                <td>
+                    <button class="btn btn-primary" onclick="doNewTrial();">New Trial</button>
+                </td>
+            </tr>
+            <tr id="Trial-New" hidden>
+                <form action="{% url 'trial-new' %}" method="post" id="Trial-New-form">
+                    {% csrf_token %}
+                    <input type="hidden" id="Trial-New-fitSheet" name="fitSheet" value="{{ object.id }}"/>
+                    <td>&nbsp;</td>
+                    <td class="text-center">
+                        <input type="number" id="Trial-New-hy" name="hy" value=""
+                               class="form-control">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" id="Trial-New-hx" name="hx" value=""
+                               class="form-control">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" id="Trial-New-sy" name="sy" value=""
+                               class="form-control">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" id="Trial-New-xs" name="sx" value=""
+                               class="form-control">
+                    </td>
+                    <td>
+                        <span>
+                            <button type="submit" class="btn btn-primary" form="Trial-New-form">
+                                Save
+                            </button>&nbsp;
+                            <button type="reset" class="btn btn-secondary" form="Trial-New-form">
+                                Reset
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-secondary" form="Trial-New-form"
+                                    onclick="doCancelNewTrial();">
+                                Cancel</button>
+                        </span>
+                    </td>
+                </form>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+{% load field %}
+
+<div class="card">
+    <div class="card-body">
+        {% field object "description" mode %}
+        {% field object "hy" mode %}
+        {% field object "hx" mode %}
+        {{ model }}
+        {% if model == "roadfitsheet" %}
+            {% field object "webY" mode %}
+            {% field object "webX" mode %}
+        {% endif %}
+        {% field object "sy" mode %}
+        {% field object "sx" mode %}
+        {% field object "crankLength" mode %}
+        {% field object "saddle" mode %}
+        {% field object "saddleHeight" mode %}
+        {% field object "saddleSetback" mode %}
+        {% field object "saddleBarDrop" mode %}
+        {% if model == "roadfitsheet" %}
+            {% field object "barWidth" mode %}
+            {% field object "barDrop" mode %}
+            {% field object "barReach" mode %}
+        {% else %}
+            {% field object "aeroBar" mode %}
+            {% field object "padWidth" mode %}
+            {% field object "extensions" mode %}
+        {% endif %}
+
+
+        <div class="row my-3">
+            <div class="col-sm">
+                <a href="{% url editurl object.id %}" class="btn btn-primary">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>

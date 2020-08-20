@@ -14,7 +14,7 @@
             <div class="col-sm-8"><pre>{{ value }}</pre></div>
         </div>
     {% endif %}
-{% elif type == "ForeighKey" %}
+{% elif type == "ForeignKey" %}
     {% if mode != "detail" %}
         <div class="form-group" id="{{ name }}-Group">
             <label for="{{ name }}-Input">{{ field.verbose_name }}:</label>

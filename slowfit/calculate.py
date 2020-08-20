@@ -101,10 +101,10 @@ class Candidate:
         self.distance = math.hypot(calc.hx - hxhy.hx, calc.hy - hxhy.hy)
 
     def frame(self):
-        return self.frame_size.frame_id
+        return self.frame_size.frame
 
     def brand(self):
-        return self.frame_size.frame_id.brand_id
+        return self.frame_size.frame.brand
 
     @staticmethod
     def best(c1, c2):
@@ -119,8 +119,8 @@ class Candidate:
             "frame": self.frame().name,
             "frame_id": self.frame().id,
             "year_from": self.frame().yearFrom,
-            "brand": self.frame().brand_id.name,
-            "brand_id": self.frame().brand_id.id,
+            "brand": self.frame().brand.name,
+            "brand_id": self.frame().brand.id,
             "spacers": self.spacers,
             "stem_angle": self.stem_angle,
             "stem_length": self.stem_length,
@@ -194,7 +194,7 @@ class FitCalculation:
         if self.all_or_best == OnlyBest:
             best_candidate = self.find_best_candidate(candidates)
             logger.info("Overall best candidate: %s %s stem %0.0fmm %0.0f*, %0.0fmm spacers",
-                        best_candidate.frame_size.frame_id.name,
+                        best_candidate.frame_size.frame.name,
                         best_candidate.frame_size.name,
                         best_candidate.stem_length, candidates[0].stem_angle, candidates[0].spacers)
             return [best_candidate]
@@ -202,7 +202,7 @@ class FitCalculation:
             logger.info("Results for Stack %0.0f Reach %0.0f", self.hy, self.hx)
             for c in candidates:
                 logger.info("%s %s stem %0.0fmm %0.0f*, %0.0fmm  --> %f %f",
-                            c.frame_size.frame_id.name, c.frame_size.name,
+                            c.frame_size.frame.name, c.frame_size.name,
                             c.stem_length, c.stem_angle, c.spacers, c.hx, c.hy)
             return candidates
 
@@ -228,7 +228,7 @@ class FitCalculation:
             candidates_for_frame_size: [Candidate] = self.calculate_for_frame_size()
             if candidates_for_frame_size:
                 best_candidate = self.find_best_candidate(candidates_for_frame_size)
-                frame_id = best_candidate.frame_size.frame_id.id
+                frame_id = best_candidate.frame_size.frame.id
                 if frames.get(frame_id) is None:
                     frames[frame_id] = best_candidate
                 else:
@@ -238,7 +238,7 @@ class FitCalculation:
 
     def calculate_for_frame(self):
         candidates: [Candidate] = []
-        for self.frame_size in FrameSize.objects.filter(frame_id=self.frame):
+        for self.frame_size in FrameSize.objects.filter(frame=self.frame):
             c: [Candidate] = self.calculate_for_frame_size()
             candidates.extend(c)
         logger.info("%s has %d candidates", self.frame.name, len(candidates))
@@ -254,11 +254,11 @@ class FitCalculation:
                     hxhy = self.stack_reach()
                     if hxhy:
                         candidates.append(Candidate(self.frame_size, self, hxhy))
-                    # logger.info("%s %s %f mm %f mm %f*: %f %f", self.frame_size.frame_id.name, self.frame_size.name,
+                    # logger.info("%s %s %f mm %f mm %f*: %f %f", self.frame_size.frame.id.name, self.frame_size.name,
                     #             self.spacers, self.stem_length, self.stem_angle, hxhy.hx, hxhy.hy)
                     self.stem_length += 10
                 self.spacers += 2.5
-        logger.info("%s %s has %d candidates", self.frame_size.frame_id.name, self.frame_size.name, len(candidates))
+        logger.info("%s %s has %d candidates", self.frame_size.frame.name, self.frame_size.name, len(candidates))
         return candidates
 
     def stack_reach(self):

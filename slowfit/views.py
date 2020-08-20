@@ -66,10 +66,9 @@ def oauth2(request):
 
 
 def index(request):
-    context = {
-        "user": request.user
-    }
-    RegisteredClasses.dump_classes()
+    context = {}
+    if hasattr(request, "user"):
+        context["user"] = request.user
     return render(request, "slowfit/index.html", context=context)
 
 

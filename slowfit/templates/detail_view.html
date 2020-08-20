@@ -17,11 +17,7 @@
                     <div class="col-sm">
                         <ul class="nav nav-tabs">
                             {% for tab in tabs %}
-                                {% if forloop.first %}
-                                    {% include "snippets/tabheader.html" with tab_id=tab.tab_id tab_label=tab.tab_label tab_class="active" %}
-                                {% else %}
-                                    {% include "snippets/tabheader.html" with tab_id=tab.tab_id tab_label=tab.tab_label tab_class="" %}
-                                {% endif %}
+                                {% include "snippets/tabheader.html" with tab_id=tab.tab_id tab_label=tab.tab_label tab_class=tab.class %}
                             {% endfor %}
                             {% if object.has_assets %}
                                 {% include "snippets/tabheader.html" with tab_id="assets" tab_header="Uploads" tab_class="" %}
@@ -65,16 +61,24 @@
     <script>
         $(document).ready(() => {
             let url = location.href.replace(/\/$/, "");
-
-            if (location.hash) {
-                const hash = url.split("#");
-                const tab = $(`a[href="#${hash[1]}"]`);
-                tab.tab("show");
-                url = location.href.replace(/\/#/, "#");
-                history.replaceState(null, null, url);
-                setTimeout(() => {
-                    $(window).scrollTop(0);
-                }, 400);
+            {% if active_tab %}
+                const tabname = {{ active_tab }};
+            {% else %}
+                let tabname = null;
+                if (location.hash) {
+                    const hash = location.href.replace(/\/$/, "").split("#");
+                    tabname = hash[1];
+                }
+            {% endif %}
+            if (tabname) {
+                const tab = $(`a[href="#${tabname}"]`);
+                if (tab) {
+                    tab.tab("show");
+                    history.replaceState(null, null, location.href.replace(/\/#/, "#"));
+                    setTimeout(() => {
+                        $(window).scrollTop(0);
+                    }, 400);
+                }
             }
 
             $('a[data-toggle="tab"]').on("click", function() {
@@ -83,4 +87,6 @@
             });
         });
     </script>
+    {% block TrailerAppendix %}
+    {% endblock %}
 {% endblock %}

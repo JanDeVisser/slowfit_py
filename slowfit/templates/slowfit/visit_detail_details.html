@@ -1,0 +1,29 @@
+{% load field %}
+
+<div class="card">
+    <div class="card-body">
+        {% field object "date" mode %}
+        {% field object "purpose" mode %}
+        {% field object "experience" mode %}
+        {% field object "goals" mode %}
+        {% field object "injuries" mode %}
+        {% field object "customerConcerns" mode %}
+        {% field object "fitterConcerns" mode %}
+        {% field object "pedalSystem" mode %}
+        {% field object "hy" mode %}
+        {% field object "hx" mode %}
+        {% field object "sy" mode %}
+        {% field object "sx" mode %}
+        {% field object "crankLength" mode %}
+        {% field object "saddle" mode %}
+        {% field object "saddleHeight" mode %}
+        {% field object "saddleSetback" mode %}
+        {% field object "saddleBarDrop" mode %}
+
+        <div class="row my-3">
+            <div class="col-sm">
+                <a href="{% url editurl object.id %}" class="btn btn-primary">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>
