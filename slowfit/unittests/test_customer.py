@@ -45,45 +45,43 @@ class CustomerTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "slowfit/customer_list.html")
 
-    def test_create_customer(self):
+    def test_create_customer_page(self):
         response = self.client.get("/customer/new/")
         self.assertTemplateUsed(response, "slowfit/customer_new.html")
 
+    def test_create_customer(self):
         response = self.client.post("/customer/new/", data=CUSTOMER_DATA)
-        self.assertGreaterEqual(response.status_code, 300)
-        self.assertLess(response.status_code, 400)
+        self.assertEquals(response.status_code, 302)
         self.assertRegex(response.url, r"\/customer\/\d+")
         customer_id = response.url.split('/')[2]
         customer = Customer.objects.get(pk=customer_id)
         self.assertEqual(customer.lastName, CUSTOMER_LAST_NAME)
 
+    def test_new_customer_in_list(self):
+        _ = create_customer()
         response = self.client.get("/customer/")
-        response.render()
-        html = response.content.decode('utf8').strip()
-        self.assertIn(CUSTOMER_LAST_NAME, html)
+        self.assertIn(CUSTOMER_LAST_NAME, response.content.decode())
 
     def test_view_customer(self):
         customer_id = create_customer()
-
         response = self.client.get(f"/customer/{customer_id}/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "slowfit/customer_detail.html")
-        response.render()
-        html = response.content.decode('utf8').strip()
-        self.assertIn(CUSTOMER_PHONE_MAIN, html)
+        self.assertIn(CUSTOMER_PHONE_MAIN, response.content.decode())
 
-    def test_edit_customer(self):
+    def test_edit_customer_page(self):
         customer_id = create_customer()
         response = self.client.get(f"/customer/{customer_id}/edit/")
         self.assertTemplateUsed(response, "slowfit/customer_edit.html")
 
+    def test_edit_customer(self):
+        customer_id = create_customer()
         updated_data = {}
         updated_data.update(CUSTOMER_DATA)
         updated_data["email"] = CUSTOMER_EMAIL_2
         response = self.client.post(f"/customer/{customer_id}/edit/", data=updated_data)
-        self.assertGreaterEqual(response.status_code, 300)
-        self.assertLess(response.status_code, 400)
-
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.url, f"/customer/{customer_id}/")
         customer = Customer.objects.get(pk=customer_id)
         self.assertEquals(customer.lastName, CUSTOMER_LAST_NAME)
         self.assertEquals(customer.email, CUSTOMER_EMAIL_2)

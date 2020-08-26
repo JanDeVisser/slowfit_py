@@ -19,8 +19,7 @@
             <div class="col-sm-9">
                 <div class="table-responsive">
                     {% block Form %}
-{#                        <form action="{% block URL %}/{% endblock %}" method="POST">#}
-                        <form method="POST">
+                        <form action="{% block URL %}{% endblock %}" method="POST">
                             {% csrf_token %}
                             {% for field in form %}
                                 {% block Field %}
@@ -38,15 +37,15 @@
                             {% endfor %}
                             <div class="my-3">
                                 {% block FormButtons %}
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                    <button type="submit" class="btn btn-primary" id="submit_form_button">Submit</button>
+                                    <button type="reset" class="btn btn-secondary" id="reset_form_button">Reset</button>
                                     {% if cancelurl %}
                                         {% if cancelurl_param %}
                                             <a href="{% url cancelurl cancelurl_param %}" class="btn btn-secondary">Cancel</a>
                                         {% elif object %}
                                             <a href="{% url cancelurl object.id %}" class="btn btn-secondary">Cancel</a>
                                         {% else %}
-                                            <a href="{% url cancelurl %}" class="btn btn-secondary">Cancel</a>
+                                            <a href="{% url cancelurl %}" class="btn btn-secondary" id="cancel_form_button">Cancel</a>
                                         {% endif %}
                                     {% endif %}
                                 {% endblock %}

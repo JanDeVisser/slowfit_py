@@ -4,7 +4,7 @@
 
 {% block Body %}
     <div class="row">
-        <h2>Customers</h2>
+        <h2 id="customers_header">Customers</h2>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -15,10 +15,10 @@
             {% for customer in object_list %}
                 <tr>
                     <td class="text-center">
-                        <a href="{% url 'customer-view' customer.id %}">{{ customer.firstName }}</a>
+                        <a href="{% url 'customer-view' customer.id %}" id="firstName-link-{{ customer.id }}">{{ customer.firstName }}</a>
                     </td>
                     <td class="text-center">
-                        <a href="{% url 'customer-view' customer.id %}">{{ customer.lastName }}</a>
+                        <a href="{% url 'customer-view' customer.id %}" id="lastName-link-{{ customer.id }}">{{ customer.lastName }}</a>
                     </td>
                 </tr>
                 {% if forloop.last %}
@@ -30,7 +30,7 @@
                     <td>None yet!</td>
             {% endfor %}
                     <td class="text-center">
-                        <a href="{% url 'customer-new' %}" class="btn btn-primary">New Customer</a>
+                        <a href="{% url 'customer-new' %}" class="btn btn-primary" id="new_customer_link">New Customer</a>
                     </td>
                 </tr>
         </table>

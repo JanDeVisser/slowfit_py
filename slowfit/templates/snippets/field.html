@@ -63,7 +63,7 @@
             <div class="col-sm-4">
                 {{ field.verbose_name }}:
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8" id="{{ name }}">
                 {% if "href" in attrs %}
                     <a href="{{ attrs.href }}">{{ value }}</a>
                 {% else %}
