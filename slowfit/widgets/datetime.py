@@ -17,7 +17,7 @@ class DatePickerInput(DateInput):
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        context['widget']['date'] = 'true'
-        context['widget']['time'] = 'false'
-        context['widget']['format'] = 'Y-m-d'
+        # context['widget']['date'] = 'true'
+        # context['widget']['time'] = 'false'
+        context['widget']['format'] = 'yyyy-mm-dd'
         return context

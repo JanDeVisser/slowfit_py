@@ -2,9 +2,7 @@
 
 <script>
   $(function () {
-    $("input[name='{{ widget.name }}']").datetimepicker({
-        timepicker: {{ widget.time }},
-        datepicker: {{ widget.date }},
+    $("input[name='{{ widget.name }}']").datepicker({
         format: '{{ widget.format }}',
     });
   });
