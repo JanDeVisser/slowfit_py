@@ -1,0 +1,14 @@
+{
+  "name":     "R-Series",
+  "bikeType": "Road",
+  "material": "Carbon",
+  "yearTo":   2020,
+  "sizes": 	  [
+    {"name":    "48", "stack":   505, "reach":   360, "headTubeAngle": 73.0},
+    {"name":    "51", "stack":   530, "reach":   369, "headTubeAngle": 73.0},
+    {"name":    "54", "stack":   555, "reach":   378, "headTubeAngle": 73.0},
+    {"name":    "56", "headTubeAngle": 73.0, "stack":   580, "reach":   387},
+    {"name":    "58", "headTubeAngle": 73.0, "stack":   605, "reach":   396},
+    {"name":    "61", "headTubeAngle": 73.0, "stack":   630, "reach":   405}
+  ]
+}

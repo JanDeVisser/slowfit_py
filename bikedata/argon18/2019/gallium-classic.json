@@ -1,0 +1,15 @@
+{
+  "name":       "Gallium Classic/CS",
+  "bikeType":       "Road",
+  "material":   "Carbon",
+  "yearFrom":   2019,
+  "yearTo":     2019,
+  "sizes": 	  [
+    {"name":    "XXS", "stack":   481, "reach":   375, "headTubeAngle": 71.0},
+    {"name":    "XS", "stack":   489, "reach":   383, "headTubeAngle": 72.0},
+    {"name":    "S", "stack":   517, "reach":   389, "headTubeAngle": 72.7},
+    {"name":    "M", "stack":   547, "reach":   394, "headTubeAngle": 72.7},
+    {"name":    "L", "stack":   569, "reach":   401, "headTubeAngle": 72.7},
+    {"name":    "XL", "stack":   594, "reach":   408, "headTubeAngle": 73.0}
+  ]
+}

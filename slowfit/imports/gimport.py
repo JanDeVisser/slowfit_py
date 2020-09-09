@@ -132,7 +132,7 @@ class GImportSession(threading.Thread):
 			self.sheetId = sheet_id or "1Udfg-EYl2q0JPPvfhUrA6_3HPDOFXX8wBscjtPjBOR8"
 			self.log = ImportLog()
 			self.log.importedBy = self.user
-			self.log.sheetID = self.sheetId
+			self.log.reference = self.sheetId
 			self.set_status(START)
 			self.start()
 		except Exception as e:

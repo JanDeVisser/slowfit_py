@@ -13,6 +13,7 @@ from django.shortcuts import render, get_object_or_404
 from slowfit.models.base import RegisteredClasses, Asset
 
 from .imports.gimport import SCOPES, GImportSession, ImportLog, Credentials
+from .imports.jsonimport import JSONImportSession
 from slowfit_py.settings import DEBUG
 
 from .view.base import ModelDetail, ModelList
@@ -45,6 +46,18 @@ def import_google_sheet(request):
 
 
 @login_required
+def import_json_data(request):
+    context = {"initiated": False}
+    if "folder" in request.POST:
+        session = JSONImportSession(request.user)
+        session.import_data(request.POST["folder"], request.POST.get("brand"))
+        context["initiated"] = True
+    context["imports"] = ImportLog.objects.filter()
+    context["user"] = request.user
+    return render(request, "slowfit/import.html", context=context)
+
+
+@login_required
 def google_authorize(request):
     request.session["request_uri"] = request.build_absolute_uri()
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
@@ -70,6 +83,13 @@ def index(request):
     if hasattr(request, "user"):
         context["user"] = request.user
     return render(request, "slowfit/index.html", context=context)
+
+
+def utils(request):
+    context = {}
+    if hasattr(request, "user"):
+        context["user"] = request.user
+    return render(request, "slowfit/utils.html", context=context)
 
 
 def model_view(request, model, id):

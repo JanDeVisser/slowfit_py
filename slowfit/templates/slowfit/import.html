@@ -4,14 +4,15 @@
 
 {% block Body %}
 <div>
-    <h2>Google Data Import</h2>
+    <h2>Data Import</h2>
 
     {% if initiated %}
         <h3>Import started. Please check back here for results</h3>
     {% else %}
         <form action="{% url 'import' %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="sheetid" value="1Udfg-EYl2q0JPPvfhUrA6_3HPDOFXX8wBscjtPjBOR8"/>
+            <input type="hidden" name="folder" value="bikedata"/>
+{#            <input type="hidden" name="sheetid" value="1Udfg-EYl2q0JPPvfhUrA6_3HPDOFXX8wBscjtPjBOR8"/>#}
 {#            <input type="hidden" name="refresh" value="yes!"/>#}
             <button type="submit">Start Import</button>
         </form>
@@ -23,7 +24,7 @@
                 <table class="table table-bordered table-hover">
                     <tr>
                         <th class="text-center">Timestamp</th>
-                        <th class="text-center">Sheet Title</th>
+                        <th class="text-center">Reference</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">#Frames</th>
                         <th class="text-center">Log</th>
@@ -31,7 +32,7 @@
         {% endif %}
         <tr>
             <td class="text-center">{{import.timestamp | date:"d-m-Y H:i:s"}}</td>
-            <td class="text-center">{{import.title}}</td>
+            <td class="text-center">{{import.reference}}</td>
             <td class="text-center">{{import.status}}</td>
             <td class="text-center">{{import.frameCount}}</td>
             <td class="text-center"><pre>{{import.Log}}</pre></td>

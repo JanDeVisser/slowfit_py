@@ -1,0 +1,19 @@
+{
+  "name":       "S2",
+  "bikeType":       "Road",
+  "material":   "Carbon",
+  "yearTo":     2019,
+  "URL":        "https://www.cervelo.com",
+  "assets": [
+    { "Name": "Cervélo S2", "Tags": "_avatar", "File": "s2-2018-avatar.jpg"},
+    { "Name": "Cervélo S2 Geometry Chart", "Tags": "geometry", "File": "s2-2018-geometry.png"}
+  ],
+  "sizes": [
+    { "name": "48", "headTubeAngle": 70.5, "stack": 505, "reach": 360 },
+    { "name": "51", "headTubeAngle": 72.2, "stack": 530, "reach": 369 },
+    { "name": "54", "headTubeAngle": 73.1, "stack": 555, "reach": 378 },
+    { "name": "56", "headTubeAngle": 73.5, "stack": 580, "reach": 387 },
+    { "name": "58", "headTubeAngle": 73.5, "stack": 605, "reach": 396 },
+    { "name": "61", "headTubeAngle": 73.5, "stack": 630, "reach": 405 }
+  ]
+}

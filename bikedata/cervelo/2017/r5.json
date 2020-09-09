@@ -1,0 +1,14 @@
+{
+  "name":       "R5",
+  "bikeType":   "Road",
+  "material":   "Carbon",
+  "yearTo":     2020,
+  "sizes": 	  [
+    {"name":    "48", "stack":   499, "reach":   362, "headTubeAngle": 73.0},
+    {"name":    "51", "stack":   524, "reach":   371, "headTubeAngle": 73.0},
+    {"name":    "54", "stack":   548, "reach":   380, "headTubeAngle": 73.0},
+    {"name":    "56", "headTubeAngle": 73.0, "stack":   572, "reach":   389},
+    {"name":    "58", "headTubeAngle": 73.0, "stack":   596, "reach":   399},
+    {"name":    "61", "headTubeAngle": 73.0, "stack":   620, "reach":   408}
+  ]
+}

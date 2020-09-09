@@ -1,0 +1,13 @@
+{
+  "name":       "Nitrogen",
+  "bikeType":   "Road",
+  "material":   "Carbon",
+  "yearTo":     2019,
+  "sizes": 	  [
+    {"name":    "XS", "stack":   487, "reach":   383, "headTubeAngle": 72.0},
+    {"name":    "S", "stack":   516, "reach":   390, "headTubeAngle": 72.7},
+    {"name":    "M", "stack":   546, "reach":   394, "headTubeAngle": 72.7},
+    {"name":    "L", "stack":   566, "reach":   402, "headTubeAngle": 72.7},
+    {"name":    "XL", "stack":   592, "reach":   409, "headTubeAngle": 73.0}
+  ]
+}

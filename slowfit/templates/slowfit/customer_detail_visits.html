@@ -15,7 +15,7 @@
             {% empty %}
                 <tr>
                     <td>
-                        <h4>None yet!</h4>
+                        <h4 id="no-visits">None yet!</h4>
                     </td>
                 </tr>
             {% endfor %}
@@ -24,6 +24,6 @@
 </div>
 <div class="row my-3">
     <div class="col-sm-12">
-        <a href="{% url "visit-new" object.id %}" class="btn btn-primary">New Visit</a>
+        <a href="{% url "visit-new" object.id %}" class="btn btn-primary" id="new-visit">New Visit</a>
     </div>
 </div>

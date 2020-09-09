@@ -2,10 +2,13 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 USERNAME = "jan"
 USER_PASSWORD = "top_secret"
 USER_EMAIL = "jan@slowfit.com"
+
+BROWSER = "gecko"
 
 
 class SlowfitTestCase(StaticLiveServerTestCase):
@@ -14,9 +17,14 @@ class SlowfitTestCase(StaticLiveServerTestCase):
         self.browser = None
 
     def setUp(self) -> None:
-        options = webdriver.ChromeOptions()
-        options.binary_location = "C:/Program Files (x86)/Google/Chrome Beta/Application/chrome.exe"
-        self.browser: webdriver = webdriver.Chrome(options=options)
+        if BROWSER == "chrome":
+            options = webdriver.ChromeOptions()
+            # options.binary_location = "C:/Program Files (x86)/Google/Chrome Beta/Application/chrome.exe"
+            options.binary_location = "/snap/bin/chromium"
+            self.browser: webdriver = webdriver.Chrome(options=options)
+        elif BROWSER == "gecko":
+            binary = FirefoxBinary('/usr/bin/firefox')
+            self.browser: webdriver = webdriver.Firefox(firefox_binary=binary)
 
     def tearDown(self) -> None:
         self.browser.refresh()

@@ -1,0 +1,8 @@
+{
+  "name":    "Cervélo",
+  "URL":     "https://www.cervelo.com",
+  "country": "ca",
+  "assets": [
+    { "name": "Cervélo Logo", "tag": "_logo", "data": "cervelo.png" }
+  ]
+}

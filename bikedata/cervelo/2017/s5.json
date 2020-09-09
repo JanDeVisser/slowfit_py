@@ -1,0 +1,13 @@
+{
+  "name": "S5",
+  "bikeType": "Road",
+  "material": "Carbon",
+  "yearTo": 2020,
+  "sizes": 	  [
+    {"name": "48", "stack":   496, "reach":   367, "headTubeAngle": 73.0},
+    {"name": "51", "stack":   519, "reach":   376, "headTubeAngle": 73.0},
+    {"name": "54", "stack":   542, "reach":   384, "headTubeAngle": 73.0},
+    {"name": "56", "stack":   565, "reach":   392, "headTubeAngle": 73.0},
+    {"name": "58", "stack":   588, "reach":   401, "headTubeAngle": 73.0}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "3T",
+  "URL": "https://www.3t.bike/en/",
+  "country": "IT",
+  "assets": [
+    {
+      "name": "3T Logo",
+      "tag": "_logo",
+      "data": "3t-logo.gif"
+    }
+  ]
+}

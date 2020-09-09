@@ -1,0 +1,12 @@
+{
+  "name": "Argon18",
+  "URL": "https://www.argon18.com/en/",
+  "country": "CA",
+  "assets": [
+    {
+      "name": "Argon18 Logo",
+      "tag": "_logo",
+      "data": "argon18-logo.gif"
+    }
+  ]
+}

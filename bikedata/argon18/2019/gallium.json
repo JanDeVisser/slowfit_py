@@ -1,0 +1,15 @@
+{
+  "name":       "Gallium",
+  "bikeType":   "Road",
+  "material":   "Carbon",
+  "yearFrom":   2019,
+  "yearTo":     2019,
+  "sizes": 	  [
+    {"name":    "XXS", "stack":   474, "reach":   374, "headTubeAngle": 71.0},
+    {"name":    "XS", "stack":   492, "reach":   382, "headTubeAngle": 72.0},
+    {"name":    "S", "stack":   523, "reach":   389, "headTubeAngle": 72.7},
+    {"name":    "M", "stack":   552, "reach":   395, "headTubeAngle": 72.7},
+    {"name":    "L", "stack":   575, "reach":   401, "headTubeAngle": 72.7},
+    {"name":    "XL", "stack":   596, "reach":   408, "headTubeAngle": 73.0}
+  ]
+}

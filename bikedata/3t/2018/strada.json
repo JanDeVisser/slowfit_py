@@ -1,0 +1,26 @@
+{
+  "name": "Strada",
+  "bikeType": "Road",
+  "material": "Carbon",
+  "yearTo": 2020,
+  "URL": "https://www.3t.bike/en/219-strada",
+  "assets": [
+    {
+      "name": "Geometry Chart",
+      "tag": "geometry",
+      "data": "Strada-geom-2019.png"
+    },
+    {
+      "name": "Strada Pro Force",
+      "tag": "_avatar",
+      "data": "strada-pro-force-bike.jpg"
+    }
+  ],
+  "sizes": [
+    {"name": "XS", "stack": 501, "reach": 349, "headTubeAngle": 69.5},
+    {"name": "S", "stack": 507, "reach": 369, "headTubeAngle": 71.2},
+    {"name": "M", "stack": 536, "reach": 381, "headTubeAngle": 73.0},
+    {"name": "L", "stack": 565, "reach": 393, "headTubeAngle": 73.5},
+    {"name": "XL", "stack": 594, "reach": 405, "headTubeAngle": 73.5}
+  ]
+}

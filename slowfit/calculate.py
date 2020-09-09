@@ -1,8 +1,7 @@
 import logging
 import math
 
-from django.http import HttpResponseServerError
-from django.http import JsonResponse
+from django.http import HttpResponseServerError, HttpRequest, JsonResponse
 
 from .models.bikes import Brand, Frame, FrameSize
 
@@ -12,9 +11,6 @@ stem_angles = [-17, -6, 6, 17]
 
 # stem_lengths = [ 70, 80, 90, 95, 100, 105, 110, 120, 130, 140 ]
 stem_lengths = [70, 80, 90, 95, 100, 105, 110, 120, 130]
-
-AllResults = "ALL"
-OnlyBest = "ONLYBEST"
 
 
 class ParameterMissing(Exception):
@@ -26,28 +22,28 @@ class ParameterMissing(Exception):
 
 
 def int_value(request, name):
-    string_value = request.GET.get(name)
+    string_value = request.POST.get(name, request.GET.get(name))
     if string_value is None:
         raise ParameterMissing(name)
     return int(string_value)
 
 
-def optional_int_value(request, name, default_value):
-    string_value = request.GET.get(name)
+def optional_int_value(request, name, default_value=None):
+    string_value = request.POST.get(name, request.GET.get(name))
     if string_value is None:
         return default_value
     return int(string_value)
 
 
 def float_value(request, name):
-    string_value = request.GET.get(name)
+    string_value = request.POST.get(name, request.GET.get(name))
     if string_value is None:
         raise ParameterMissing(name)
     return float(string_value)
 
 
-def optional_float_value(request, name, default_value):
-    string_value = request.GET.get(name)
+def optional_float_value(request, name, default_value=None):
+    string_value = request.POST.get(name, request.GET.get(name))
     if string_value is None:
         return default_value
     return float(string_value)
@@ -76,8 +72,13 @@ def hx_hy(stack, reach, ht_angle, spacers, stem_length, stem_angle):
     return ret
 
 
-def stack_reach(frame_size: FrameSize, spacers: float, stem_length: float, stem_angle: float):
-    return hx_hy(frame_size.stack, frame_size.reach, frame_size.headTubeAngle, spacers, stem_length, stem_angle)
+def stack_reach(spacers: float, stem_length: float, stem_angle: float,
+                frame_size: FrameSize = None, stack: float = None, reach: float = None):
+    if frame_size is not None:
+        stack = frame_size.stack
+        reach = frame_size.reach
+    return hx_hy(stack, reach,
+                 frame_size.headTubeAngle if frame_size else 73.0, spacers, stem_length, stem_angle)
 
 
 class HXHY:
@@ -100,6 +101,12 @@ class Candidate:
         self.hy = hxhy.hy
         self.distance = math.hypot(calc.hx - hxhy.hx, calc.hy - hxhy.hy)
 
+    def __str__(self):
+        if self.frame_size:
+            return str(self.frame_size)
+        else:
+            return f"Stack XX Reach XX"
+
     def frame(self):
         return self.frame_size.frame
 
@@ -113,14 +120,14 @@ class Candidate:
             else c2
 
     def to_dict(self):
-        return {
-            "frame_size": self.frame_size.name,
-            "frame_size_id": self.frame_size.id,
-            "frame": self.frame().name,
-            "frame_id": self.frame().id,
-            "year_from": self.frame().yearFrom,
-            "brand": self.frame().brand.name,
-            "brand_id": self.frame().brand.id,
+        ret = {
+            "frame_size": "<none>",
+            "frame_size_id": -1,
+            "frame": "<none>",
+            "frame_id": -1,
+            "year_from": 2010,
+            "brand": "<none>",
+            "brand_id": -1,
             "spacers": self.spacers,
             "stem_angle": self.stem_angle,
             "stem_length": self.stem_length,
@@ -130,16 +137,33 @@ class Candidate:
             "hy": self.hy,
             "distance": self.distance,
         }
+        if self.frame_size:
+            ret.update({
+                "frame_size": self.frame_size.name,
+                "frame_size_id": self.frame_size.id,
+                "frame": self.frame().name,
+                "frame_id": self.frame().id,
+                "year_from": self.frame().yearFrom,
+                "brand": self.frame().brand.name,
+                "brand_id": self.frame().brand.id,
+            })
+        return ret
 
 
 class FitCalculation:
+    AllResults = "ALL"
+    OnlyBest = "ONLYBEST"
+
     def __init__(self,
                  hx, hy,
                  max_spacers=0.0,
                  min_stem_length=0.0,
                  max_stem_length=0.0,
                  frame=None,
-                 frame_size=None):
+                 frame_size=None,
+                 stack=None,
+                 reach=None,
+                 all_or_best=None):
         self.frame = frame
         self.frame_size = frame_size
         self.hx = hx
@@ -151,9 +175,19 @@ class FitCalculation:
         self.stem_length = 0.0
         self._max_spacers = max_spacers
         self.spacers = 0.0
-        self.all_or_best = AllResults if frame_size is None else OnlyBest
+        self.all_or_best = all_or_best or (self.AllResults if frame_size is None else self.OnlyBest)
         self.threshold_x = 0.0
         self.threshold_y = 0.0
+        self.stack = stack
+        self.reach = reach
+
+    def __str__(self):
+        if self.frame_size:
+            return str(self.frame_size)
+        elif self.frame:
+            return str(self.frame)
+        else:
+            return f"Stack {self.stack}mm Reach {self.reach}mm"
 
     def stem_angles(self):
         if self._stem_angles:
@@ -185,24 +219,24 @@ class FitCalculation:
             candidates = self.calculate_for_frame_size()
         elif self.frame:
             candidates = self.calculate_for_frame()
+        elif self.stack is not None and self.stack > 0:
+            candidates = self.calculate_for_frame_size()
         else:
             candidates = self.calculate_for_all()
 
         if not candidates:
             return []
 
-        if self.all_or_best == OnlyBest:
+        if self.all_or_best == self.OnlyBest:
             best_candidate = self.find_best_candidate(candidates)
-            logger.info("Overall best candidate: %s %s stem %0.0fmm %0.0f*, %0.0fmm spacers",
-                        best_candidate.frame_size.frame.name,
-                        best_candidate.frame_size.name,
-                        best_candidate.stem_length, candidates[0].stem_angle, candidates[0].spacers)
+            logger.info("Overall best candidate: %s stem %0.0fmm %0.0f*, %0.0fmm spacers",
+                        best_candidate, best_candidate.stem_length, candidates[0].stem_angle, candidates[0].spacers)
             return [best_candidate]
         else:
             logger.info("Results for Stack %0.0f Reach %0.0f", self.hy, self.hx)
             for c in candidates:
-                logger.info("%s %s stem %0.0fmm %0.0f*, %0.0fmm  --> %f %f",
-                            c.frame_size.frame.name, c.frame_size.name,
+                logger.info("%s stem %0.0fmm %0.0f*, %0.0fmm  --> %f %f",
+                            self,
                             c.stem_length, c.stem_angle, c.spacers, c.hx, c.hy)
             return candidates
 
@@ -241,7 +275,7 @@ class FitCalculation:
         for self.frame_size in FrameSize.objects.filter(frame=self.frame):
             c: [Candidate] = self.calculate_for_frame_size()
             candidates.extend(c)
-        logger.info("%s has %d candidates", self.frame.name, len(candidates))
+        logger.info("%s has %d candidates", self, len(candidates))
         return candidates
 
     def calculate_for_frame_size(self):
@@ -253,38 +287,48 @@ class FitCalculation:
                 while self.stem_length <= self.max_stem_length():
                     hxhy = self.stack_reach()
                     if hxhy:
-                        candidates.append(Candidate(self.frame_size, self, hxhy))
-                    # logger.info("%s %s %f mm %f mm %f*: %f %f", self.frame_size.frame.id.name, self.frame_size.name,
-                    #             self.spacers, self.stem_length, self.stem_angle, hxhy.hx, hxhy.hy)
+                        candidate = Candidate(self.frame_size, self, hxhy)
+                        candidates.append(candidate)
+                        # logger.info("%s %f mm %f mm %f*: %f %f (%f)", self, self.spacers, self.stem_length, self.stem_angle,
+                        #             hxhy.hx, hxhy.hy, candidate.distance)
                     self.stem_length += 10
                 self.spacers += 2.5
-        logger.info("%s %s has %d candidates", self.frame_size.frame.name, self.frame_size.name, len(candidates))
+        logger.info("%s has %d candidates", self, len(candidates))
         return candidates
 
     def stack_reach(self):
-        hxhy = stack_reach(self.frame_size, self.spacers, self.stem_length, self.stem_angle)
+        hxhy = stack_reach(self.spacers, self.stem_length, self.stem_angle,
+                           frame_size=self.frame_size, stack=self.stack, reach=self.reach)
         return hxhy if self.allow(hxhy.hx, hxhy.hy) else None
 
 
-def calculate(request):
+def calculate(request: HttpRequest):
     logger.info("%s /calculate: %s?%s", request.method, request.path, request.META["QUERY_STRING"])
     try:
-        frame_size_id = optional_int_value(request, "size", -1)
-        if frame_size_id >= 0:
+        frame = None
+        frame_size = None
+        frame_size_id = optional_int_value(request, "size")
+        frame_id = optional_int_value(request, "frame")
+        stack = optional_int_value(request, "stack")
+        reach = optional_int_value(request, "reach")
+        if frame_size_id is not None:
             frame_size = FrameSize.objects.get(pk=frame_size_id)
             frame = None
-        else:
+        elif frame_id is not None:
             frame_size = None
-            frame_id = optional_int_value(request, "frame", -1)
             frame = Frame.objects.get(pk=frame_id) if frame_id >= 0 else None
+        all_or_best = request.POST.get("all_or_best", request.GET.get("all_or_best"))
         calc = FitCalculation(
             float_value(request, "hx"),
             float_value(request, "hy"),
-            optional_float_value(request, "MaxSpacers", 0.0),
-            optional_float_value(request, "MinStemLength", 0.0),
-            optional_float_value(request, "MaxStemLength", 0.0),
-            frame,
-            frame_size
+            max_spacers=optional_float_value(request, "MaxSpacers", 0.0),
+            min_stem_length=optional_float_value(request, "MinStemLength", 0.0),
+            max_stem_length=optional_float_value(request, "MaxStemLength", 0.0),
+            frame=frame,
+            frame_size=frame_size,
+            stack=stack,
+            reach=reach,
+            all_or_best=all_or_best
         )
         response = [candidate.to_dict() for candidate in calc.calculate()]
         logger.info("%s /calculate: %s?%s: %d candidates",

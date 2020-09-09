@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block Title %}Slowfit bike fit tracker{% endblock %}
+
+{% block Body %}
+    <div>
+        <h2>Find your frame</h2>
+        <form name="fitcalculator">
+            <div class="form-group">
+                <label for="HY">Handlebar Stack (HY):</label>
+                <input type="number" class="form-control" name="HY" id="HY" value="640"/>
+            </div>
+            <div class="form-group">
+                <label for="HX">Handlebar Reach (HX):</label>
+                <input type="number" class="form-control" name="HX" id="HX" value="514"/>
+            </div>
+            <div class="form-group">
+                <label for="stack">Bike Stack:</label>
+                <input type="number" class="form-control" name="stack" id="stack" value="640"/>
+            </div>
+            <div class="form-group">
+                <label for="reach">Bike Reach:</label>
+                <input type="number" class="form-control" name="reach" id="reach" value="514"/>
+            </div>
+            <div class="collapse" id="advanced">
+            </div>
+            <script>
+                function calculate() {
+                    const hx = document.getElementById("HX").value;
+                    const hy = document.getElementById("HY").value;
+                    const stack = document.getElementById("stack").value;
+                    const reach = document.getElementById("reach").value;
+                    if (hx && hy) {
+                        fetch(`{% url 'calculate' %}?hx=${hx}&hy=${hy}&stack=${stack}&reach=${reach}&all_or_best=ONLYBEST`)
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((data) => {
+                                if (data && data.length) {
+                                    const table = document.getElementById("candidate-table");
+                                    const body = table.tBodies[0];
+                                    while (body.rows.length > 0) {
+                                        body.deleteRow(0);
+                                    }
+                                    for (let i = 0; i < data.length; i++) {
+                                        const row = data[i];
+                                        const tr = body.insertRow();
+                                        td = tr.insertCell();
+                                        td.className = "text-center";
+                                        td.innerHTML = row.spacers;
+                                        td = tr.insertCell();
+                                        td.className = "text-center";
+                                        td.innerHTML = row.stem_length;
+                                        td = tr.insertCell();
+                                        td.className = "text-center";
+                                        td.innerHTML = row.stem_angle;
+                                        td = tr.insertCell();
+                                        td.className = "text-center";
+                                        const d = row.distance.toFixed(1);
+                                        td.innerHTML = `${d}`;
+                                    }
+                                    const showCandidates = $('#show-candidates');
+                                    showCandidates.collapse('show');
+                                }
+                            });
+                    }
+                }
+            </script>
+            <button type="button" class="btn btn-primary" onclick="calculate();">
+                Calculate Fit
+            </button>
+        </form>
+        <div class="collapse" id="show-candidates">
+            <div class="table-responsive">
+                <h2>Candidate Frames</h2>
+                <table class="table table-bordered table-hover" id="candidate-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Spacers (mm)</th>
+                            <th class="text-center">Stem Length (mm)</th>
+                            <th class="text-center">Angle (deg)</th>
+                            <th class="text-center">Distance (mm)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock Body %}

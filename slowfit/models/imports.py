@@ -19,7 +19,7 @@ class ImportLog(models.Model):
 
 	timestamp = models.DateTimeField(auto_now_add=True)
 	importedBy = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-	sheetId = models.TextField()
+	reference = models.TextField(null=True)
 	title = models.TextField(null=True)
 	status = models.TextField(choices=STATUS_CHOICES)
 	frameCount = models.PositiveSmallIntegerField(default=0)
